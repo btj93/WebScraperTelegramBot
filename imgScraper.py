@@ -10,12 +10,10 @@ import traceback
 from time import sleep
 import re
 
-btjchat_id = 396277982
-testchat_id = -447245450
-# logchat_id = -436851115
-logchat_id = btjchat_id
-nogiblogbotToken = '1162938350:AAHSJQg4vAqmmOgrMTG9mKPiDC8lHsAM6WE'
-testbotToken = '1201408151:AAGmC05wwGoAHpfgjmiO7eqCgfW0I0UlKMU'
+testchat_id = 'INSERT CHAT ID HERE'
+logchat_id = 'INSERT CHAT ID HERE'
+nogiblogbotToken = 'INSERT TELEGRAM BOT TOKEN HERE'
+testbotToken = 'INSERT TELEGRAM BOT TOKEN HERE'
 
 botToken = testbotToken
 
@@ -85,13 +83,11 @@ def handle_message(message):
         for rawUrl in matches:
             if not (rawUrl.startswith("https://") or rawUrl.startswith("http://")):
                 rawUrl = "https://"+ message.text
-            # bot.send_message(btjchat_id, text=rawUrl)
             if "hinatazaka46.com/s/h46app/" in rawUrl:
                 rawUrl = rawUrl.replace("hinatazaka46.com/s/h46app", "hinatazaka46.com/s/official")
             with requests.get(rawUrl, headers=headers) as response:
                 if response.status_code == 200:
                     url = requests.get(rawUrl).url
-                    bot.send_message(btjchat_id, text=url)
                     result = []
                     if url.startswith("https://www.hinatazaka46.com/s/official/diary/detail/"):
                         result = asyncio.run(Scrap.hina(response.content))
@@ -124,11 +120,6 @@ def handle_message(message):
                     flat_list = [item for sublist in result for item in sublist]
                     bot.send_message(message.chat.id, f"Number of images found: {len(flat_list)}\n\nSending images...", reply_to_message_id=message.message_id)
                     for imgs in result:
-                        # bot2.send_media_group(chat_id=message.chat.id,
-                        #                       media=list(
-                        #                           map(lambda s: telegram.InputMediaDocument(media=io.BytesIO(s)), imgs)),
-                        #                       timeout=200,
-                        #                       reply_to_message_id=message.message_id)
                         sendMediaGroup(chat_id=message.chat.id,
                                        media=list([telegram.InputMediaDocument(media=io.BytesIO(s),
                                                                                filename="image.jpg")
